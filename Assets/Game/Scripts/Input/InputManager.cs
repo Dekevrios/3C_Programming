@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     public Action<Vector2> OnMoveInput; 
     public Action<bool> OnSprintInput;
     public Action OnJumpInput;
+    public Action OnClimbInput;
+    public Action OnCancelClimb;
 
     private void Update()
     {
@@ -27,7 +29,6 @@ public class InputManager : MonoBehaviour
     {
         float verticalInput = Input.GetAxis("Vertical");
         float horizontalInput = Input.GetAxis("Horizontal");
-        Debug.Log($"Vertical Input: {verticalInput}, Horizontal Input: {horizontalInput}");
 
         Vector2 inputAxis = new Vector2(horizontalInput, verticalInput);
         if(OnMoveInput != null)
@@ -42,7 +43,11 @@ public class InputManager : MonoBehaviour
         bool isPressJumpInput = Input.GetKeyDown(KeyCode.Space);
         if (isPressJumpInput)
         {
-            OnJumpInput();
+            if (OnJumpInput != null)
+            {
+                OnJumpInput();
+            }
+                
         }
     }
 
@@ -89,8 +94,7 @@ public class InputManager : MonoBehaviour
 
         if (isPressClimbInput)
         {
-            Debug.Log("Climb ");
-            // Handle climb logic here
+            OnClimbInput();
         }
     }
 
@@ -112,8 +116,12 @@ public class InputManager : MonoBehaviour
 
         if (isPressCancelInput)
         {
-            Debug.Log("Cancel ");
-            // Handle cancel logic here
+            if(OnCancelClimb != null)
+            {
+                OnCancelClimb();
+            }
+
+                
         }
 
     }
