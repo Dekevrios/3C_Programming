@@ -46,7 +46,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private CameraManager cameraManager;
 
-
     private float rotationSmoothVelocity;
 
     private float speed;
@@ -55,11 +54,13 @@ public class PlayerMovement : MonoBehaviour
     private PlayerStance playerStance;
 
     private Rigidbody rb;
-    
+    private Animator animator;
+
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         speed = walkSpeed;
         playerStance = PlayerStance.Stand;
         HideAndLockCursor();
@@ -72,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
         inputManager.OnJumpInput += Jump;
         inputManager.OnClimbInput += StartClimb;    
         inputManager.OnCancelClimb += CancelClimb;
+        cameraManager.OnChangePerspective += ChangePerspective;
     }
 
     private void OnDestroy()
@@ -81,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         inputManager.OnJumpInput -= Jump;
         inputManager.OnClimbInput -= StartClimb;
         inputManager.OnCancelClimb -= CancelClimb;
+        cameraManager.OnChangePerspective -= ChangePerspective;
     }
 
     private void Update()
@@ -124,8 +127,12 @@ public class PlayerMovement : MonoBehaviour
 
                     break;
             }
+            Vector3 velocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude);
+            animator.SetFloat("VelocityX", velocity.magnitude * axisDirection.x);
+            animator.SetFloat("VelocityZ", velocity.magnitude * axisDirection.y);
 
-            
+
         }
         else if (isPlayerClimbing)
         {
@@ -162,6 +169,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 jumpDirection = Vector3.up; // sama seperti new Vector3(...;
             rb.AddForce(jumpDirection * jumpForce * Time.deltaTime);
+            animator.SetTrigger("Jump");
         }
 
         
@@ -171,6 +179,7 @@ public class PlayerMovement : MonoBehaviour
     private void CheckIsGrounded()
     {
         isGrounded = Physics.CheckSphere(groundDetector.position, detectorRadius, groundLayer);
+        animator.SetBool("isGrounded", isGrounded);
     }
 
     private void CheckStep()
@@ -211,6 +220,11 @@ public class PlayerMovement : MonoBehaviour
             cameraManager.SetFPSClampedCamera(false, transform.rotation.eulerAngles);
             cameraManager.SetTPSFieldOfView(60);
         }
+    }
+
+    private void ChangePerspective()
+    {
+        animator.SetTrigger("ChangePerspective");
     }
 
 }
