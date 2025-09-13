@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour
     public Action OnGlideInput;
     public Action OnCancelGlide;
     public Action OnPunchInput;
+    public Action OnMainMenuInput;
 
     private void Update()
     {
@@ -61,11 +62,11 @@ public class InputManager : MonoBehaviour
         bool isHoldSprintInput = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         if (isHoldSprintInput)
         {
-            OnSprintInput(true);
+            if(OnSprintInput != null) OnSprintInput(true);
         }
         else
         {
-            OnSprintInput(false);
+            if (OnSprintInput != null) OnSprintInput(false);
         }
     }
 
@@ -156,8 +157,11 @@ public class InputManager : MonoBehaviour
         bool isPressMainMenuInput = Input.GetKeyDown(KeyCode.Escape);
         if (isPressMainMenuInput)
         {
-            Debug.Log("Main Menu ");
-            // Handle main menu logic here
+            if(OnMainMenuInput != null)
+            {
+                OnMainMenuInput();
+            }
+
         }
 
     }

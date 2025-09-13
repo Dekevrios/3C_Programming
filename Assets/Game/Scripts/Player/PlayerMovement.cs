@@ -109,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         inputManager.OnCrouchInput += Crouch;
         inputManager.OnGlideInput += StartGlide;
         inputManager.OnPunchInput += Punch;
+        inputManager.OnCancelGlide += CancelGlide;
 
         cameraManager.OnChangePerspective += ChangePerspective;
 
@@ -122,8 +123,9 @@ public class PlayerMovement : MonoBehaviour
         inputManager.OnClimbInput -= StartClimb;
         inputManager.OnCancelClimb -= CancelClimb;
         inputManager.OnCrouchInput -= Crouch;
-        inputManager.OnGlideInput -= CancelGlide;
+        inputManager.OnGlideInput -= StartGlide;
         inputManager.OnPunchInput -= Punch;
+        inputManager.OnCancelGlide -= CancelGlide;
 
         cameraManager.OnChangePerspective -= ChangePerspective;
 
@@ -214,7 +216,7 @@ public class PlayerMovement : MonoBehaviour
 
         else
         {
-            if (speed > sprintSpeed)
+            if (speed > walkSpeed)
             {
                 speed = speed - walkSprintTransition * Time.deltaTime;
             }
@@ -226,7 +228,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
         {
             Vector3 jumpDirection = Vector3.up; // sama seperti new Vector3(...;
-            rb.AddForce(jumpDirection * jumpForce * Time.deltaTime);
+            rb.AddForce(jumpDirection * jumpForce, ForceMode.Impulse);
             animator.SetTrigger("Jump");
         }
 
