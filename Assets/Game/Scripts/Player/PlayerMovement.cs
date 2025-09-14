@@ -73,6 +73,9 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField]
     private PlayerAudioManager playerAudioManager;
+    [SerializeField]
+    private Transform resetPos;
+
 
     private bool isPunching;
     private int combo = 0;
@@ -89,6 +92,15 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private CapsuleCollider colliderCP;
 
+
+    public void ResetPosToCheckpoint()
+    {
+        if(resetPos != null)
+        {
+            transform.position = resetPos.position;
+            transform.rotation = resetPos.rotation;
+        }
+    }
 
     private void Awake()
     {
@@ -324,6 +336,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Crouch()
     {
+        Vector3 checkerUp = transform.position + (transform.up * 1.4f);
+        bool isCantStand = Physics.Raycast(checkerUp, transform.up, 0.25f, groundLayer);
+
         if (playerStance == PlayerStance.Stand)
         {
             playerStance = PlayerStance.Crouch;
@@ -332,7 +347,7 @@ public class PlayerMovement : MonoBehaviour
             colliderCP.height = 1.3f;
             colliderCP.center = Vector3.up * 0.66f;
         }
-        else if (playerStance == PlayerStance.Crouch)
+        else if (playerStance == PlayerStance.Crouch && !isCantStand)
         {
             playerStance = PlayerStance.Stand;
             animator.SetBool("IsCrouch", false);

@@ -5,7 +5,7 @@ public class MainMenuManager : MonoBehaviour
 {
     public void Play()
     {
-        SceneManager.LoadScene("Gameplay");
+        SceneManager.LoadScene("ForestHillGame");
     }
 
     public void Quit()
